@@ -2,7 +2,7 @@
 
 using Configuration;
 
-public static class ServiceCollectionExtension
+public static partial class ServiceCollectionExtension
 {
     public static IServiceCollection AddMassTransit(this IServiceCollection services,
         IConfiguration configuration,
@@ -29,6 +29,9 @@ public static class ServiceCollectionExtension
         return services;
     }
 
+    [GeneratedRegex(@"(?:rabbitmq|amqp):\/\/(\w*):(\w*)@(\w*):(\d*)", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
+    private static partial Regex ConnectionStringRegex();
+
     private static void ConfigureRabbitMqHost(this IRabbitMqBusFactoryConfigurator configurator,
         MassTransitRabbitMqConfigurationSection configuration)
     {
@@ -36,8 +39,7 @@ public static class ServiceCollectionExtension
 
         if (!string.IsNullOrEmpty(connectionString))
         {
-            var regex = new Regex(@"(?:rabbitmq|amqp):\/\/(\w*):(\w*)@(\w*):(\d*)");
-            var matches = regex.Matches(connectionString);
+            var matches = ConnectionStringRegex().Matches(connectionString);
 
             if (matches.Any() && matches.First().Groups.Count == 5)
             {
