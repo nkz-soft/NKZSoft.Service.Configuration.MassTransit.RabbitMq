@@ -41,7 +41,7 @@ public static partial class ServiceCollectionExtension
         {
             var matches = ConnectionStringRegex().Matches(connectionString);
 
-            if (matches.Any() && matches.First().Groups.Count == 5)
+            if (matches.Count > 0 && matches.First().Groups.Count == 5)
             {
                 var groups = matches.First().Groups;
 
